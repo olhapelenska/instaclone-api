@@ -8,6 +8,7 @@ import {
   addPost,
   toggleLike,
   deletePost,
+  updateDescription,
 } from "../controllers/post-controller.js";
 import multer from "multer";
 
@@ -34,12 +35,12 @@ const upload = multer({
 
 router.route("/").get(index).post(upload.single("image_url"), addPost);
 
-router.route("/:id").delete(deletePost);
+router.route("/:id").delete(deletePost).patch(updateDescription);
 
 router.route("/:id/comments").get(getComments).post(postComment);
 
 router.route("/comments/:commentId").delete(deleteComment);
 
-router.route("/:id/likes").post(toggleLike);
+router.route("/:id/likes").post(toggleLike).delete(toggleLike);
 
 export default router;
