@@ -153,6 +153,7 @@ const postComment = async (req, res) => {
     res.status(500).json({ message: `Unable to create a comment: ${error}` });
   }
 };
+
 const deleteComment = async (req, res) => {
   const { commentId } = req.params;
   const userId = req.user.id;
@@ -266,6 +267,19 @@ const toggleLike = async (req, res) => {
   }
 };
 
+const updateDescription = async (req, res) => {
+  const { id } = req.params;
+  const { description } = req.body;
+
+  try {
+    await knex("posts").where({ id }).update({ description });
+    const updatedPost = await knex("posts").where({ id }).first();
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating description." });
+  }
+};
+
 const deletePost = async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id;
@@ -301,5 +315,6 @@ export {
   unsavePost,
   addPost,
   toggleLike,
+  updateDescription,
   deletePost,
 };
