@@ -5,8 +5,6 @@ import {
   getComments,
   postComment,
   deleteComment,
-  likePost,
-  removeLike,
   addPost,
   toggleLike,
   deletePost,
@@ -15,10 +13,10 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Folder where images will be stored
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Unique file name
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
@@ -43,9 +41,5 @@ router.route("/:id/comments").get(getComments).post(postComment);
 router.route("/comments/:commentId").delete(deleteComment);
 
 router.route("/:id/likes").post(toggleLike);
-
-router.route("/:id/likes").post(likePost);
-
-router.route("/:id/likes/:likeId").delete(removeLike);
 
 export default router;
