@@ -14,10 +14,10 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Folder where images will be stored
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Unique file name
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 

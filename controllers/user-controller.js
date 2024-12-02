@@ -68,7 +68,6 @@ const getUserPost = async (req, res) => {
   const { postId, id } = req.params;
 
   try {
-    // Fetch the post details with user information
     const post = await knex("users")
       .join("posts", "posts.user_id", "users.id")
       .select(
@@ -88,7 +87,6 @@ const getUserPost = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Fetch comments for the post
     const comments = await knex("comments")
       .join("users", "comments.user_id", "users.id")
       .select(
@@ -99,13 +97,11 @@ const getUserPost = async (req, res) => {
       )
       .where({ "comments.post_id": postId });
 
-    // Fetch likes count for the post
     const likesCount = await knex("likes")
       .where({ post_id: postId })
       .count("id as count")
       .first();
 
-    // Combine all data into a single response
     res.json({
       ...post,
       comments: comments || [],
@@ -128,7 +124,7 @@ const registerUser = async (req, res) => {
       profile_picture: "/uploads/default-profile.png",
     });
     const newUser = await knex("users").where({ id: newUserId }).first();
-    res.status(201).json(newUser); // Ensure new user is returned
+    res.status(201).json(newUser);
   } catch (error) {
     if (error.code === "ER_DUP_ENTRY") {
       res.status(400).json({ message: "User with this email already exists" });
@@ -185,27 +181,23 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check if the user exists
     const user = await knex("users").where({ email }).first();
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Compare provided password with hashed password in the database
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Generate JWT
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h", // Token expires in 1 hour
+      expiresIn: "1h",
     });
 
-    // Send response
     res.status(200).json({
       message: "Login successful",
-      token, // Send the token to the client
+      token,
       user: {
         id: user.id,
         user_name: user.user_name,
