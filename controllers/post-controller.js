@@ -162,7 +162,10 @@ const deleteComment = async (req, res) => {
     const comment = await knex("comments")
       .join("posts", "comments.post_id", "posts.id")
       .where("comments.id", commentId)
-      .select("posts.user_id as postOwnerId")
+      .select(
+        "posts.user_id as postOwnerId",
+        "comments.user_id as commentOwnerId"
+      )
       .first();
 
     if (!comment) {
@@ -171,10 +174,10 @@ const deleteComment = async (req, res) => {
         .json({ message: `Comment with ID ${commentId} not found` });
     }
 
-    if (comment.postOwnerId !== userId) {
+    if (comment.postOwnerId !== userId && comment.commentOwnerId !== userId) {
       return res.status(403).json({
         message:
-          "Access denied. You can only delete comments on your own posts.",
+          "Access denied. You can only delete comments on your own posts or your own comments.",
       });
     }
 

@@ -93,7 +93,7 @@ const getUserPost = async (req, res) => {
         "comments.id",
         "comments.comment",
         "users.user_name",
-        "users.profile_picture"
+        "comments.user_id"
       )
       .where({ "comments.post_id": postId });
 
