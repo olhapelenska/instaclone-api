@@ -18,7 +18,8 @@ const index = async (req, res) => {
         "posts.updated_at",
         "users.user_name",
         "users.profile_picture"
-      );
+      )
+      .orderBy("posts.created_at", "desc");
 
     const likes = await knex("likes")
       .select(
