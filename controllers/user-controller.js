@@ -178,34 +178,36 @@ const deleteUser = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    const user = await knex("users").where({ email }).first();
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+    console.log("🔹 Received login request:", req.body);
+
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Missing email or password" });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "Invalid email or password" });
+    const user = await knex("users").where({ email }).first();
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    console.log("🔹 User found:", user);
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "10h",
+      expiresIn: "1h",
     });
 
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user.id,
-        user_name: user.user_name,
-        profile_picture: user.profile_picture,
-      },
-    });
+    console.log("🔹 Login successful, token generated");
+
+    res.json({ token, user });
   } catch (error) {
-    res.status(500).json({ message: `Error logging in: ${error}` });
+    console.error("❌ Error logging in:", error);
+    res.status(500).json({ message: "Error logging in", error: error.message });
   }
 };
 
