@@ -3,7 +3,7 @@ import userRoutes from "./routes/user-routes.js";
 import postRoutes from "./routes/post-routes.js";
 import cors from "cors";
 import authenticateToken from "./middleware/auth-middleware.js";
-import knex from "./db/knex.js"; // Ensure this points to your Knex config
+import knex from "./knexfile.js"; // Ensure this points to your Knex config
 
 const app = express();
 const PORT = process.env.PORT || 5050;
